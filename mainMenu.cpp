@@ -2,11 +2,18 @@
 #include <vector>
 #include <ncurses.h>
 #include <queue>
+#include <functional>
+#include "findValuesOfList.hpp"
 
 using namespace std;
 
 queue<int> inputQueue;
-vector<string> options;
+struct option{
+    string nameOnScreen;
+    void (*functionForMenu)();
+};
+
+vector<option> options;
 
 void input(){
     int x;
@@ -29,7 +36,8 @@ int setup(){
     init_pair(3, COLOR_RED, COLOR_BLACK); //list
     init_pair(4, COLOR_YELLOW, COLOR_BLACK); //label
     init_pair(5, COLOR_CYAN, COLOR_BLACK); // instructions
-    init_pair(6, COLOR_BLACK, COLOR_WHITE); //normal color
+    init_pair(6, COLOR_BLACK, COLOR_YELLOW); //normal color
+    init_pair(7, COLOR_BLACK, COLOR_CYAN);
 }
 
 void MainMenu(){
@@ -48,22 +56,26 @@ void MainMenu(){
         mvprintw(options.size() + 3,0,"+------------------------------------+");
     attroff(COLOR_PAIR(1));
 
-    attron(COLOR_PAIR(5));
+    attron(COLOR_PAIR(4));
         mvprintw(1,1,"Use arrow keys to navigate");
         mvprintw(2,1,"Press enter to select option");
-    attroff(COLOR_PAIR(5));
+    attroff(COLOR_PAIR(4));
 
-    attron(COLOR_PAIR(6));
+    attron(COLOR_PAIR(7));
         mvprintw(3,1, options[0].c_str());
-    attroff(COLOR_PAIR(6));
+    attroff(COLOR_PAIR(7));
 
     attron(COLOR_PAIR(2));
-    for(int i = 1; i <= options.size(); i++)
-        mvprintw(i + 3,1,options[i].c_str());
+    for(int i = 1; i < options.size(); i++){
+        mvprintw(i + 3,1, options[i].c_str());
+    }
     attroff(COLOR_PAIR(2));
     
+    // attron(COLOR_PAIR(6));
+    // mvprintw(16,0,"TESTING");
+    // attroff(COLOR_PAIR(6));
+
     int currentSelected = 0;
-    attron(A_REVERSE);
     while(1){
         input();
         while(!inputQueue.empty()){
@@ -71,42 +83,44 @@ void MainMenu(){
             inputQueue.pop();
             if(key == KEY_UP){
                 if(currentSelected > 0){
+                    attron(COLOR_PAIR(2));
                     mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());
+                    attroff(COLOR_PAIR(2));
                     currentSelected--;
-                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());
-                    
+                    attron(COLOR_PAIR(7));
+                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());                    
+                    attroff(COLOR_PAIR(7));
                 }
             }
             else if(key == KEY_DOWN){
                 if(currentSelected < options.size() - 1){
+                    attron(COLOR_PAIR(2));
                     mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());
+                    attroff(COLOR_PAIR(2));
                     currentSelected++;
-                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());
+                    attron(COLOR_PAIR(7));
+                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());                    
+                    attroff(COLOR_PAIR(7));
                 }
             }
             else if(key == 10){
-                //go to menu selected
+
             }
             else if(key == 'q'){
                 return;
             }
-            cout << currentSelected << endl;
-            // attron(COLOR_PAIR(2));
-            // mvprintw(15,0,itoa(currentSelected));
-            // attroff(COLOR_PAIR(2));
+
         }
     }
-    attroff(A_REVERSE);
 
 
 }
 
-
+void helloWorld(){
+    cout << "HEllo world" <<  endl;
+}
 
 int main(){
-    options.push_back("Find Values Given List");
-    options.push_back("Test1");
-    options.push_back("Testing2");
 
     MainMenu();
     endwin();
