@@ -1,22 +1,12 @@
-#include <string>
-#include <iostream>
-#include <queue>
-#include <math.h>
-#include <algorithm>
-#include <vector>
-#include <ncurses.h>
-#include <climits>
-#include "math/findingValuesOfList.hpp"
+#include "findingValuesMenu.hpp"
 
-using namespace std;
-
-//global variables
 vector<float> list;
-queue<int> inputQueue;
+queue<int> inputQueuefindingValuesMenu;
 int row, column;
 bool wantFloats;
 
-void printList(vector<float> list){
+
+void findingValuesGivenList::printList(vector<float> list){
       move(0,7);
       if(wantFloats)
         for(int i = 0; i < list.size(); i++){
@@ -35,7 +25,7 @@ void printList(vector<float> list){
       }      
 }
 
-void clearList(){
+void findingValuesGivenList::clearList(){
     int max = getmaxx(stdscr);
     for(int i = 5; i < max; i++){
         mvprintw(0,i," ");
@@ -43,7 +33,7 @@ void clearList(){
     }
 }
 
-void setupBorders(){
+void findingValuesGivenList::setupBorders(){
     attron(COLOR_PAIR(1));
     mvprintw(2,0, "+-----------------------------+--------------------------------+");
     mvprintw(3,0, "|                             |                                |");
@@ -105,7 +95,7 @@ void setupBorders(){
 
 }
 
-void computeStatistics(){
+void findingValuesGivenList::computeStatistics(){
     vector<float> calculateList = list;
     sort(calculateList.begin(), calculateList.end());
 
@@ -134,16 +124,16 @@ void computeStatistics(){
     mvprintw(21,10,"%4f",findMax(calculateList));
 }
 
-void input(){
+void findingValuesGivenList::input(){
     int x;
     timeout(2);
     x = getch();
     if(x != -1){
-        inputQueue.push(x);
+        inputQueuefindingValuesMenu.push(x);
     }
 }
 
-int setup(){
+void findingValuesGivenList::setup(){
     wantFloats = false;
     initscr();
     raw();
@@ -158,17 +148,16 @@ int setup(){
     init_pair(5, COLOR_CYAN, COLOR_BLACK); // instructions
 }
 
-
-int main(){
+void findingValuesGivenList::runMenu(){
     int decimalPos = -1;
     float inputNum = INT_MAX;
     setup();
     setupBorders();
     while(1){
         input();
-        while(!inputQueue.empty()){
-            int key = inputQueue.front();
-            inputQueue.pop();
+        while(!inputQueuefindingValuesMenu.empty()){
+            int key = inputQueuefindingValuesMenu.front();
+            inputQueuefindingValuesMenu.pop();
             
             if(key == 'c'){
                 clearList();
@@ -182,15 +171,14 @@ int main(){
 
             else if(key == 'q'){
                 endwin();
-                system("clear");
-                return 0;
+                werase(stdscr);
+                return;
             }
 
             else if(key == 'f'){
                 clearList();
                 wantFloats = !wantFloats;
             }
-
 
             else if(key == '.'){
                 decimalPos = 1;
@@ -229,5 +217,5 @@ int main(){
         }
     }
 
-    return 0;
+    return ;
 }

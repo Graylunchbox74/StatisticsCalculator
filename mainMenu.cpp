@@ -3,17 +3,21 @@
 #include <ncurses.h>
 #include <queue>
 #include <functional>
-#include "findValuesOfList.hpp"
+#include "findValuesOfList/menu/findingValuesMenu.hpp"
+//#include "findValuesOfList/findValuesOfList.hpp"
 
 using namespace std;
 
+//global
 queue<int> inputQueue;
+vector<option> options;
+
+
 struct option{
     string nameOnScreen;
-    void (*functionForMenu)();
+    function<void()> functionToCall;
 };
 
-vector<option> options;
 
 void input(){
     int x;
@@ -62,20 +66,22 @@ void MainMenu(){
     attroff(COLOR_PAIR(4));
 
     attron(COLOR_PAIR(7));
-        mvprintw(3,1, options[0].c_str());
+        mvprintw(3,1, options[0].nameOnScreen.c_str());
     attroff(COLOR_PAIR(7));
 
     attron(COLOR_PAIR(2));
     for(int i = 1; i < options.size(); i++){
-        mvprintw(i + 3,1, options[i].c_str());
+        mvprintw(i + 3,1, options[i].nameOnScreen.c_str());
     }
     attroff(COLOR_PAIR(2));
     
     // attron(COLOR_PAIR(6));
     // mvprintw(16,0,"TESTING");
     // attroff(COLOR_PAIR(6));
+}
 
-    int currentSelected = 0;
+void MainMenuRun(){
+        int currentSelected = 0;
     while(1){
         input();
         while(!inputQueue.empty()){
@@ -84,27 +90,29 @@ void MainMenu(){
             if(key == KEY_UP){
                 if(currentSelected > 0){
                     attron(COLOR_PAIR(2));
-                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());
+                    mvprintw(currentSelected + 3, 1, options[currentSelected].nameOnScreen.c_str());
                     attroff(COLOR_PAIR(2));
                     currentSelected--;
                     attron(COLOR_PAIR(7));
-                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());                    
+                    mvprintw(currentSelected + 3, 1, options[currentSelected].nameOnScreen.c_str());                    
                     attroff(COLOR_PAIR(7));
                 }
             }
             else if(key == KEY_DOWN){
                 if(currentSelected < options.size() - 1){
                     attron(COLOR_PAIR(2));
-                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());
+                    mvprintw(currentSelected + 3, 1, options[currentSelected].nameOnScreen.c_str());
                     attroff(COLOR_PAIR(2));
                     currentSelected++;
                     attron(COLOR_PAIR(7));
-                    mvprintw(currentSelected + 3, 1, options[currentSelected].c_str());                    
+                    mvprintw(currentSelected + 3, 1, options[currentSelected].nameOnScreen.c_str());                    
                     attroff(COLOR_PAIR(7));
                 }
             }
             else if(key == 10){
-
+                werase(stdscr);
+                options[currentSelected].functionToCall();
+                MainMenu();
             }
             else if(key == 'q'){
                 return;
@@ -116,13 +124,11 @@ void MainMenu(){
 
 }
 
-void helloWorld(){
-    cout << "HEllo world" <<  endl;
-}
-
 int main(){
+    options.push_back({"do this!!!", findingValuesGivenList::runMenu});
 
     MainMenu();
+    MainMenuRun();
     endwin();
     return 0;
 }
