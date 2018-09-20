@@ -1,86 +1,20 @@
-#include "findingValuesMenu.hpp"
+#include <string>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <vector>
+#include <ncurses.h>
+#include <climits>
 
+using namespace std;
 
-vector<float> outcome, probability;
+vector<int> outcome;
+vector<float> probability;
 queue<int> inputQueueProbabilityDistribution;
 int row, column;
 
-
-void findingValuesGivenList::setupBorders(){
-    attron(COLOR_PAIR(1));
-    mvprintw(2,0, "+-----------------------------+--------------------------------+");
-    mvprintw(3,0, "|                             |                                |");
-    mvprintw(4,0, "|                             |                                |");
-    mvprintw(5,0, "|                             |                                |");
-    mvprintw(6,0, "|                             |                                |");
-    mvprintw(7,0, "|                             |                                |");
-    mvprintw(8,0, "|                             |                                |");
-    mvprintw(9,0, "|                             |                                |");
-    mvprintw(10,0,"|                             |                                |");
-    mvprintw(11,0,"+-----------------------------+--------------------------------+");
-    mvprintw(12,0,"|                             |                                |");
-    mvprintw(13,0,"|                             |                                |");
-    mvprintw(14,0,"|                             |                                |");
-    mvprintw(15,0,"|                             |                                |");
-    mvprintw(16,0,"+-----------------------------+                                |");
-    mvprintw(17,0,"|                             |                                |");
-    mvprintw(18,0,"|                             |                                |");
-    mvprintw(19,0,"|                             |                                |");
-    mvprintw(20,0,"|                             |                                |");
-    mvprintw(21,0,"|                             |                                |");
-    mvprintw(22,0,"+-----------------------------+--------------------------------+");
-    attroff(COLOR_PAIR(1));
-
-    attron(COLOR_PAIR(4));
-    mvprintw(0, 0, "list: ");
-    mvprintw(3,2,"Sample:");
-    mvprintw(5,2,"Standard Deviation:");
-    mvprintw(8,2,"Variance:");
-
-
-
-    mvprintw(3,32,"Population:");
-    mvprintw(5,32,"Standard Deviation:");
-    mvprintw(8,32,"Variance:");
-
-    mvprintw(12, 2, "Mean:");
-    mvprintw(13, 2, "Median:");
-    mvprintw(14, 2, "Mode:");
-    mvprintw(15, 2, "Range:");
-
-    mvprintw(17,2,"Low:");
-    mvprintw(18,2,"Q1:");
-    mvprintw(19,2,"Median:");
-    mvprintw(20,2,"Q3:");
-    mvprintw(21,2,"High:");
-
-    mvprintw(12,32,"Instructions");
-    attroff(COLOR_PAIR(4));
-
-    attron(COLOR_PAIR(5));
-    mvprintw(13,32,"Type in list, space seperated");
-    mvprintw(14,32,"Type 'c' to clear list");
-    mvprintw(15,32,"Type 'q' to quit");
-    mvprintw(16,32,"Type 'f' to toggle float view");
-
-    attroff(COLOR_PAIR(6));
-
-
-}
-
-void computeStatistics(){
-}
-
-void findingValuesGivenList::input(){
-    int x;
-    timeout(2);
-    x = getch();
-    if(x != -1){
-        inputQueueProbabilityDistribution.push(x);
-    }
-}
-
-void findingValuesGivenList::setup(){
+void setup(){
     initscr();
     raw();
     curs_set(FALSE);
@@ -94,11 +28,108 @@ void findingValuesGivenList::setup(){
     init_pair(5, COLOR_CYAN, COLOR_BLACK); // instructions
 }
 
-void findingValuesGivenList::runMenu(){
+void  input(){
+    int x;
+    timeout(2);
+    x = getch();
+    if(x != -1){
+        inputQueueProbabilityDistribution.push(x);
+    }
+}
+
+void setupBordersTable(){
+
+    attron(COLOR_PAIR(1));          
+        mvprintw(2,0,"+-----+------------------+");
+        mvprintw(3,0,"|     |                  |");
+        mvprintw(4,0,"+-----+------------------+");
+    attroff(COLOR_PAIR(1));
+
+    attron(COLOR_PAIR(4));
+        mvprintw(3,3,"X");
+        mvprintw(3,8,"Probability of X");
+    attroff(COLOR_PAIR(4));
+}
+
+void printTableContents(){
+    for(int i = 0; i < outcome.size(); i++){
+        attron(COLOR_PAIR(1));
+            mvprintw(i+5,0,"|     |                  |");
+        attroff(COLOR_PAIR(1));
+
+        mvprintw(i+5,5,"%d", outcome[i]);
+        if(i < probability.size()){
+            mvprintw(i+5,8,"%.7f", probability[i]);
+        }
+    }
+    attron(COLOR_PAIR(1));
+        mvprintw(outcome.size()+5,0,"+-----+------------------+");
+    attroff(COLOR_PAIR(1));
+    return;
+}
+
+
+void getTable(){
+    int inputNum = INT_MAX;
+    int decimalPos = -1;
+    setupBordersTable();
+    printTableContents();
+}
+
+
+
+
+
+void setupBordersStatistics(){
+    attron(COLOR_PAIR(1));
+//                           10        20        30        40        50        60
+//                 01234567890123456789012345678901234567890123456789012345678901234567890
+    mvprintw(2,0, "+-------------------------------------------------------------+-----+------------------+");
+    mvprintw(3,0, "|                                                             |     |                  |");
+    mvprintw(4,0, "|                                                             |-----+------------------+");
+    mvprintw(5,0, "|                                                             |");
+    mvprintw(6,0, "|                                                             |");
+    mvprintw(7,0, "|                                                             |");
+    mvprintw(8,0, "|                                                             |");
+    mvprintw(9,0, "|                                                             |");
+    mvprintw(10,0,"|                                                             |");
+    mvprintw(11,0,"+-------------------------------------------------------------+");
+    mvprintw(12,0,"|                                                             |");
+    mvprintw(13,0,"|                                                             |");
+    mvprintw(14,0,"|                                                             |");
+    mvprintw(15,0,"|                                                             |");
+    mvprintw(16,0,"|                                                             |");
+    mvprintw(17,0,"|                                                             |");
+    mvprintw(18,0,"|                                                             |");
+    mvprintw(19,0,"+-------------------------------------------------------------+");
+    attroff(COLOR_PAIR(1));
+
+    attron(COLOR_PAIR(4));
+    mvprintw(3, 65, "X");
+    mvprintw(3, 70, "Probability of X");
+    mvprintw(3,1,"Select X value:");
+    mvprintw(4,1,"Probability of X:");
+    mvprintw(5,1,"Probability of X and Greater:");
+    mvprintw(6,1,"Probability of X and Less:");
+    mvprintw(8,1,"Is X Significant:");
+    mvprintw(9,1,"Is X and Greater Significant:");
+    mvprintw(10,1,"Is X and Less Significant:");
+    attroff(COLOR_PAIR(4));
+
+    //instructions
+    attron(COLOR_PAIR(5));
+    attroff(COLOR_PAIR(5));
+
+}
+
+void computeStatistics(){
+}
+
+void runMenu(){
     int decimalPos = -1;
     float inputNum = INT_MAX;
     setup();
-    setupBorders();
+    //setupBorders();
     while(1){
         input();
         while(!inputQueueProbabilityDistribution.empty()){
@@ -106,8 +137,8 @@ void findingValuesGivenList::runMenu(){
             inputQueueProbabilityDistribution.pop();
             
             if(key == 'c'){
-                clearList();
-                setupBorders();
+//                clearList();
+                //setupBorders();
                 inputNum = INT_MAX;
                 decimalPos = -1;
                 outcome = {};
@@ -155,9 +186,25 @@ void findingValuesGivenList::runMenu(){
 
             if(!outcome.empty())
                 computeStatistics();
-            printList(outcome);
+            //printList(outcome);
         }
     }
 
     return ;
+}
+
+
+int main(){
+    setup();
+    outcome.push_back(1);
+    outcome.push_back(2);
+    outcome.push_back(3);
+    probability.push_back(0.123f);
+    probability.push_back(0.987f);
+    getTable();
+    while(inputQueueProbabilityDistribution.empty()){
+        input();
+    }
+    endwin();
+    return 0;
 }
