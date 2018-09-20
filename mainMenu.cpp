@@ -10,7 +10,6 @@ using namespace std;
 
 //global
 queue<int> inputQueue;
-vector<option> options;
 
 
 struct option{
@@ -18,6 +17,7 @@ struct option{
     function<void()> functionToCall;
 };
 
+vector<option> options;
 
 void input(){
     int x;
@@ -124,9 +124,14 @@ void MainMenuRun(){
 
 }
 
-int main(){
-    options.push_back({"do this!!!", findingValuesGivenList::runMenu});
+void helloWorld(){
+	cout << "hello world" << endl;
+}
 
+int main(){
+    options.push_back({"Compute Statistics Given List", findingValuesGivenList::runMenu});
+    options.push_back({"Print out Hello World", helloWorld});
+//    options.push_back({"Basic Probability",findingValuesGivenList::runMenu});
     MainMenu();
     MainMenuRun();
     endwin();
