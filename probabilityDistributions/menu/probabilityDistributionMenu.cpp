@@ -62,7 +62,7 @@ void printTableContents(){
             mvprintw(i+5,8,"%.5f", probability[i]);
         }
     }
-    attron(COLOR_PAIR(1));
+    attron(COLOR_PAIR(1));           
         mvprintw(outcome.size()+5,0,"+-----+------------------+");
     attroff(COLOR_PAIR(1));
     return;
@@ -125,6 +125,12 @@ void getTable(){
             }
             else if(key == ' '){
                 if(outcomeVector && inputNum != INT_MAX){
+                        for(int i = 0; i < outcome.size() - 1; i++){
+                            if(outcome[i] == inputNum){
+                                mvprintw(0,0,"This outcome already exists");
+                                outcome.pop_back();
+                            }
+                        }
                         inputNum = INT_MAX;
                         outcomeVector = !outcomeVector;
                 }
@@ -132,7 +138,20 @@ void getTable(){
                     if(inputFloat != -1){
                         inputFloat = -1;
                         decimalPos = -1;
-                        outcomeVector = !outcomeVector;                        
+                        outcomeVector = !outcomeVector;
+                        float tmpSum = 0;                        
+                        for(int i = 0; i < probability.size(); i++){
+                            if(probability[i] > 1f){
+                                mvprintw(0,35,"the %d number is greater than one", i+1);
+                            }
+                            else if(probability[i] < 0f){
+                                mvprintw(1,35,"the %d number is less than zero", i+1);
+                            }
+                            tmpSum += probability[i];
+                        }
+                        if(sum != 0f){
+                                mvprintw(2,35,"the sum of probabilities does not equal 1");
+                        }
                     }
                 }
             }
