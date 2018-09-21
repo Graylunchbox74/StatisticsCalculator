@@ -90,9 +90,10 @@ void getTable(){
             }
             else if(key >= '0' && key <= '9'){
                 if(outcomeVector){
-                    if(inputNum == INT_MAX)
+                    if(inputNum == INT_MAX){
                         inputNum = key - '0';
                         outcome.push_back(inputNum);
+                    }
                     else{
                         inputNum *= 10;
                         inputNum += key - '0';
