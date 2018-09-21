@@ -78,7 +78,6 @@ void getTable(){
     printTableContents();
     while(1){
         input();
-        printTableContents();
         while(!inputQueueProbabilityDistribution.empty()){
             int key = inputQueueProbabilityDistribution.front();
             inputQueueProbabilityDistribution.pop();
@@ -93,19 +92,23 @@ void getTable(){
                 if(outcomeVector){
                     if(inputNum == INT_MAX)
                         inputNum = key - '0';
+                        outcome.push_back(inputNum);
                     else{
                         inputNum *= 10;
                         inputNum += key - '0';
+                        outcome[outcome.size()-1] = inputNum;
                     }
                 }
                 else{
                     if(decimalPos == -1){
                         if(inputFloat == -1){
                             inputFloat = key - '0';
+                            probability.push_back(inputFloat);
                         }
                         else{
                             inputFloat *= 10;
                             inputFloat += key - '0';
+                            probability[probability.size() - 1] = inputFloat;
                         }
                     }
                     else{
@@ -120,18 +123,17 @@ void getTable(){
             }
             else if(key == ' ' || key == KEY_ENTER){
                 if(outcomeVector && inputNum != INT_MAX){
-                        outcome.push_back(inputNum);
                         inputNum = INT_MAX;
                         outcomeVector = !outcomeVector;
                 }
                 else{
                     if(inputFloat != -1){
-                        probability.push_back(inputFloat);
                         inputFloat = -1;
                         outcomeVector = !outcomeVector;                        
                     }
                 }
             }
+            printTableContents();
         }
     }
 }
