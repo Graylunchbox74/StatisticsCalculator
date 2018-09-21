@@ -123,12 +123,12 @@ void getTable(){
                     }
                 }
             }
-            else if(key == ' ' || key == KEY_ENTER){
+            else if(key == ' '){
                 if(outcomeVector && inputNum != INT_MAX){
                         inputNum = INT_MAX;
                         outcomeVector = !outcomeVector;
                 }
-                else{
+                else if(!outcomeVector && inputFloat != -1){
                     if(inputFloat != -1){
                         inputFloat = -1;
                         decimalPos = -1;
