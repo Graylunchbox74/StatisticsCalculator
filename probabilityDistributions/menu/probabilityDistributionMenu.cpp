@@ -71,9 +71,62 @@ void printTableContents(){
 
 void getTable(){
     int inputNum = INT_MAX;
+    float inputFloat = -1;
     int decimalPos = -1;
+    bool outcomeVector = true;
     setupBordersTable();
     printTableContents();
+    while(1){
+        input();
+        while(!inputQueueProbabilityDistribution.empty()){
+            int key = inputQueueProbabilityDistribution.front();
+            inputQueueProbabilityDistribution.pop();
+            if(key == 'q'){
+                return;
+            }
+            else if(key == '.'){
+                if(decimalPos == -1 && outcomeVector == false)
+                    decimalPos = 1;
+            }
+            else if(key >= '0' && key <= '9'){
+                if(outcomeVector){
+                    if(inputNum == INT_MAX)
+                        inputNum = key - '0';
+                    else{
+                        inputNum *= 10;
+                        inputNum += key - '0';
+                    }
+                }
+                else{
+                    if(decimalPos == -1){
+                        if(inputFloat == -1){
+                            inputFloat = key - '0';
+                        }
+                        else{
+                            inputFloat *= 10;
+                            inputFloat += key - '0';
+                        }
+                    }
+                    else{
+                        float addTo = key - '0';
+                        for(int i = 0; i < decimalPos; i++){
+                            addTo /= 10
+                        }
+                        inputFloat += addTo;
+                        decimalPos++;
+                    }
+                }
+            }
+            else if(key == ' ' || key == KEY_ENTER){
+                if(outcomeVector){
+                    if(inputNum != INT_MAX){
+                        outcome.push_back(inputNum);
+                        
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -82,8 +135,8 @@ void getTable(){
 
 void setupBordersStatistics(){
     attron(COLOR_PAIR(1));
-//                           10        20        30        40        50        60
-//                 01234567890123456789012345678901234567890123456789012345678901234567890
+//                 0         10        20        30        40        50        60        70        80
+//                 0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567
     mvprintw(2,0, "+-------------------------------------------------------------+-----+------------------+");
     mvprintw(3,0, "|                                                             |     |                  |");
     mvprintw(4,0, "|                                                             |-----+------------------+");
