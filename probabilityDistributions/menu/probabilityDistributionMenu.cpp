@@ -57,9 +57,9 @@ void printTableContents(){
             mvprintw(i+5,0,"|     |                  |");
         attroff(COLOR_PAIR(1));
 
-        mvprintw(i+5,5,"%d", outcome[i]);
+        mvprintw(i+5,5,"%3d", outcome[i]);
         if(i < probability.size()){
-            mvprintw(i+5,8,"%.7f", probability[i]);
+            mvprintw(i+5,8,"%.5f", probability[i]);
         }
     }
     attron(COLOR_PAIR(1));
