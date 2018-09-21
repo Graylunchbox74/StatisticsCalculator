@@ -119,6 +119,7 @@ void getTable(){
                         }
                         inputFloat += addTo;
                         decimalPos++;
+                        probability[probability.size() - 1] = inputFloat;
                     }
                 }
             }
@@ -130,6 +131,7 @@ void getTable(){
                 else{
                     if(inputFloat != -1){
                         inputFloat = -1;
+                        decimalPos = -1;
                         outcomeVector = !outcomeVector;                        
                     }
                 }
